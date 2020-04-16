@@ -15,7 +15,7 @@ all:
 
 	chmod +x AppDir/AppRun
 
-	appimagetool AppDir $(OUTPUT)
+	bin/appimagetool.AppImage AppDir $(OUTPUT)
 
 	chmod +x $(OUTPUT)
 
