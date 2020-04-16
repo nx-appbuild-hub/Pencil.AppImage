@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Pencil 3.1
+Comment=An open-source GUI prototyping tool
+Exec=AppRun %U
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=icon
+Categories=Development;Office;
+StartupWMClass=Pencil
+StartupNotify=true
