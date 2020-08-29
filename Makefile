@@ -11,7 +11,7 @@ all:
 	rm -rf AppDir/opt
 	
 	mkdir --parents AppDir/opt/application
-	mv build/opt/pencil-3.1.0.ga/* AppDir/opt/application
+	mv build/opt/pencil-*/* AppDir/opt/application
 
 	chmod +x AppDir/AppRun
 
