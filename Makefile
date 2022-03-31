@@ -1,24 +1,35 @@
-SOURCE="https://pencil.evolus.vn/dl/V3.1.0.ga/pencil_3.1.0.ga_amd64.deb"
-DESTINATION="build.deb"
-OUTPUT="Pencil.AppImage"
+# Copyright 2020 Alex Woroschilow (alex.woroschilow@gmail.com)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+PWD := $(shell pwd)
+
+DOCKER_COMPOSE:=docker-compose -f $(PWD)/docker-compose.yaml
+
+.EXPORT_ALL_VARIABLES:
+CID=$(shell basename $(PWD) | tr -cd '[:alnum:]' | tr A-Z a-z)
+UID=$(shell id -u)
+GID=$(shell id -g)
+
+.PHONY: all
 
 
-all:
-	echo "Building: $(OUTPUT)"
-	wget -O $(DESTINATION)  $(SOURCE)
-	
-	dpkg -x $(DESTINATION) build
-	rm -rf AppDir/opt
-	
-	mkdir --parents AppDir/opt/application
-	mv build/opt/pencil-3.1.0.ga/* AppDir/opt/application
+all: clean
+	$(DOCKER_COMPOSE) stop
+	$(DOCKER_COMPOSE) up --build --no-start
+	$(DOCKER_COMPOSE) up -d  "appimage"
+	$(DOCKER_COMPOSE) run    "appimage" make all
+	$(DOCKER_COMPOSE) run    "appimage" chown -R $(UID):$(GID) ./
+	$(DOCKER_COMPOSE) stop
 
-	chmod +x AppDir/AppRun
-
-	bin/appimagetool.AppImage AppDir $(OUTPUT)
-
-	chmod +x $(OUTPUT)
-
-	rm -f $(DESTINATION)
-	rm -rf AppDir/opt
-	rm -rf build
+clean:
+	$(DOCKER_COMPOSE) up -d  "appimage"
+	$(DOCKER_COMPOSE) run    "appimage" make clean
+	$(DOCKER_COMPOSE) rm --stop --force
